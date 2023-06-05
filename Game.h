@@ -2,7 +2,7 @@
 #include <utility>
 #include <vector>
 #include <unordered_map>
-#include "BoardIteratorBackup.h" 
+#include "BoardIterator.h" 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include "math.h"
