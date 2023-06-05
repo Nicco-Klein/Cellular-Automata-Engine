@@ -2,13 +2,9 @@
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 #include <iostream>
-#include <string>
-#include <fstream>
-#include <vector>
 class BoardIterator {
 public:
 	void start();
-
 	int checkUp();
 	int checkDown();
 	int checkLeft();
@@ -22,12 +18,9 @@ public:
 	int surroundCount();
 	int adjacentCount(int color);
 	int surroundId();
- 	void setTile(int tileId);
+	void setTile(int tileId);
 	void run();
 	void updateChangeList();
-	void importRules();
-	void importRules(std::string);
-
 	int** board;
 	int** bufferBoard;
 	BoardIterator();
@@ -36,52 +29,6 @@ public:
 private:
 	int xValue, yValue;
 };
-
-void BoardIterator::importRules(){
-	//importRules("Rules.txt");
-}
-
-//MAREKD
-/*void BoardIterator::importRules(std::string name){
-	std::ifstream file;
-	file.open(name);
-	std::string buffer;
-	while(!file.eof()){
-		file>>buffer;
-		std::vector<std::string> paren;
-		if(buffer == "END")
-			break;
-		else if(buffer == "SET"){
-			//thing
-			std::cout<<"\nApplying ";
-		}
-		else if(buffer == "born"){
-			//thing
-			std::cout<<"born condition for ";
-		}
-		else if(buffer == "MAKERULE"){
-			//thing
-			std::cout<<"\nApplying rule with ";
-		} 
-		else if(buffer[0] == '('){
-			paren.push_back(buffer[1]);
-			std::cout<<buffer[1]<<" ";
-		}
-		else if(buffer[-1] == ')'){
-			paren.push_back(buffer[-1]);
-			//DO THE THING HERE
-			paren.clear();
-			std::cout<<buffer[-1]<<" with parameters: ";
-		}
-		else if(paren.size()==0){
-			paren.push_back(buffer);
-		}
-		else{
-			std::cout<<buffer<<" ";
-			//ADD AS ARGUMENT
-		}
-	}
-}*/
 
 void BoardIterator::start() {
 	xValue = 0, yValue = 0;
@@ -97,40 +44,61 @@ void BoardIterator::run() {
 		notEdge = ((yValue > 0 && yValue < cols - 1) && (xValue > 0 && xValue < rows - 1));
 		if(!notEdge)
 			setTile(-1);
-
 		
-    
-		if(checkBoard() == 1 && adjacentCount(1) > 1 && adjacentCount(1) < 4) 
-			setTile(30);
+		if (checkBoard() == 0 && adjacentCount(1)>0 && ((float)rand() / RAND_MAX)<(.04 * surroundCount())) {
+			setTile(1);
+			return;
+		}else
+		if(checkBoard()==0&&adjacentCount(2)>0&&((float)rand()/RAND_MAX)<(.04*surroundCount())) {
+			setTile(2);
+			return;
+		}else
+		if(checkBoard()==0&&adjacentCount(3)>0&&((float)rand()/RAND_MAX)<(.04*surroundCount())) {
+			setTile(3);
+			return;
+		}else
+		//Green when touching red
+		if(checkBoard()==2&&adjacentCount(1)>1&&((float)rand()/RAND_MAX)<(.03*adjacentCount(1))) {
+			setTile(1);
+			return;
+		}else
+		//Green when touching yellow
+		if(checkBoard()==2&&adjacentCount(3)>1&&((float)rand()/RAND_MAX)<(.01*adjacentCount(3))) {
+			setTile(3);
+			return;
+		}else
+		//Red when touching Green
+		if(checkBoard()==1&&adjacentCount(2)>1&&((float)rand()/RAND_MAX)<(.01*adjacentCount(2))) {
+			setTile(2);
+			return;
+		}else
+		//REd when touching yellow
+		if(checkBoard()==1&&adjacentCount(3)>1&&((float)rand()/RAND_MAX)<(.03*adjacentCount(3))) {
+			setTile(3);
+			return;
+		}else
+		//Yellow when touching green
+		if(checkBoard()==3&&adjacentCount(2)>1&&((float)rand()/RAND_MAX)<(.03*adjacentCount(2))) {
+			setTile(2); 
+			return;
+		}else
+		//Yellow when touching red
+		if(checkBoard()==3&&adjacentCount(1)>1&&((float)rand()/RAND_MAX)<(.01*adjacentCount(1))) {
+			setTile(1);
+			return;
+		}
 
-		for(int i = 30; i > 0; i--)
-			if(checkBoard() == i && adjacentCount(1) == 0)
-				setTile(i-1);
-			else if(checkBoard() == 1 && adjacentCount(1) > 3)
-				setTile(i);
-			else if(checkBoard() == 1 && adjacentCount(i) > 3)
-				setTile(i);
-
-		if(checkBoard()==1 && adjacentCount(2) > 3)
-			setTile(30);
-
-		if(checkBoard() == 1 && adjacentCount(1) > 0)
-			setTile(30);
-    
-    
-
-		if((surroundCount()==2||surroundCount()==3)){
+		/*if((surroundCount()==2||surroundCount()==3)){
 				if(checkBoard()==0 && surroundCount()==3)
 					setTile(1);
 		}else
-			setTile(0); 
-			
-/*
-		if (checkBoard() != 0 && adjacentCount(checkBoard()) < 3 && adjacentCount(checkBoard())>1 && adjacentCount(0)<1 && (float)rand() / RAND_MAX<.02) {
-			setTile(4);
-			return;
-		}
-    */
+			setTile(0);
+		*/	
+		//if (checkBoard() != 0 && adjacentCount(checkBoard()) < 3 && adjacentCount(checkBoard())>1 && adjacentCount(0)<1 && (float)rand() / RAND_MAX<.02) {
+	//		setTile(4);
+	//		return;
+		//}
+
 	
 	}
 	catch (const std::exception &ex) { }
@@ -240,53 +208,5 @@ int BoardIterator::adjacentCount(int color) {
 
 BoardIterator::BoardIterator() {
 	srand((unsigned)time(NULL));
-	//importRules("Settings");
+
 }
-
-
-/*
-
-		if (checkBoard() == 0 && adjacentCount(1)>0 && ((float)rand() / RAND_MAX)<(.04 * surroundCount())) {
-			setTile(1);
-			return;
-		}else
-		if(checkBoard()==0&&adjacentCount(2)>0&&((float)rand()/RAND_MAX)<(.04*surroundCount())) {
-			setTile(2);
-			return;
-		}else
-		if(checkBoard()==0&&adjacentCount(3)>0&&((float)rand()/RAND_MAX)<(.04*surroundCount())) {
-			setTile(3);
-			return;
-		}else
-		//Green when touching red
-		if(checkBoard()==2&&adjacentCount(1)>1&&((float)rand()/RAND_MAX)<(.03*adjacentCount(1))) {
-			setTile(1);
-			return;
-		}else
-		//Green when touching yellow
-		if(checkBoard()==2&&adjacentCount(3)>1&&((float)rand()/RAND_MAX)<(.01*adjacentCount(3))) {
-			setTile(3);
-			return;
-		}else
-		//Red when touching Green
-		if(checkBoard()==1&&adjacentCount(2)>1&&((float)rand()/RAND_MAX)<(.01*adjacentCount(2))) {
-			setTile(2);
-			return;
-		}else
-		//REd when touching yellow
-		if(checkBoard()==1&&adjacentCount(3)>1&&((float)rand()/RAND_MAX)<(.03*adjacentCount(3))) {
-			setTile(3);
-			return;
-		}else
-		//Yellow when touching green
-		if(checkBoard()==3&&adjacentCount(2)>1&&((float)rand()/RAND_MAX)<(.03*adjacentCount(2))) {
-			setTile(2); 
-			return;
-		}else
-		//Yellow when touching red
-		if(checkBoard()==3&&adjacentCount(1)>1&&((float)rand()/RAND_MAX)<(.01*adjacentCount(1))) {
-			setTile(1);
-			return;
-		}
-
-*/
